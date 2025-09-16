@@ -30,6 +30,11 @@ public class TarefasController {
                 .body(listaTarefas);
     }
 
+    @PostMapping
+    public ResponseEntity<?> criarNova(@RequestBody Tarefa tarefa) {
+        return service.criarNova(tarefa);
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<?> excluir(@PathVariable Long id) {
         return service.excluirPorId(id);

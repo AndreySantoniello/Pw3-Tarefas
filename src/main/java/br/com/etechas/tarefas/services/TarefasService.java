@@ -8,18 +8,17 @@ package br.com.etechas.tarefas.services;
 import br.com.etechas.tarefas.entities.Tarefa;
 import br.com.etechas.tarefas.enums.TarefaStatusEnum;
 import br.com.etechas.tarefas.repository.TarefaRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TarefasService {
-    private TarefaRepository repository;
-
-    public TarefasService(TarefaRepository repository) {
-        this.repository = repository;
-    }
+    private final TarefaRepository repository;
 
     public List<Tarefa> listarTarefas() {
         return repository.findAll();
@@ -39,6 +38,18 @@ public class TarefasService {
         }
 
         repository.delete(tarefa);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    public ResponseEntity<?> criarNova(Tarefa tarefa) {
+        tarefa.setStatus(TarefaStatusEnum.PENDENTE);
+
+        if (tarefa.getData().isBefore(LocalDate.now())) {
+            throw new RuntimeException("Data invalida");
+        }
+
+        repository.save(tarefa);
 
         return ResponseEntity.noContent().build();
     }
